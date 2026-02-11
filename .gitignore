@@ -1,0 +1,17 @@
+# 1. 忽略编译生成的临时垃圾
+build/
+cmake-build-*/
+*.elf
+*.bin
+*.hex
+*.map
+*.o
+*.d
+.DS_Store
+Thumbs.db
+
+# 2. 默认忽略所有 .uf2，防止开发过程中的中间产物污染仓库
+*.uf2
+
+# 3. 【重点】但是！我要“法外开恩”，不忽略 Firmware 根目录下的发布版固件
+!Firmware/ZeroDAC_Release.uf2

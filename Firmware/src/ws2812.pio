@@ -1,0 +1,22 @@
+.program ws2812
+.side_set 1
+
+.define public T1 2
+.define public T2 5
+.define public T3 3
+
+; WS2812 数据传输逻辑：
+; 每一位数据都需要特定的高低电平时间比例
+; 0码: T1高 -> T2低 -> T3低
+; 1码: T1高 -> T2高 -> T3低
+
+.wrap_target
+bitloop:
+    out x, 1        side 0 [T3 - 1] ; 从 FIFO 读取 1 bit 到 X 寄存器，同时拉低电平等待 T3
+    jmp !x do_zero  side 1 [T1 - 1] ; 如果是 0 跳转，否则拉高电平持续 T1
+do_one:
+    jmp  bitloop    side 1 [T2 - 1] ; 继续拉高 T2 (总共高 T1+T2)，然后循环
+do_zero:
+    nop             side 0 [T2 - 1] ; 拉低 T2 (总共高 T1)，然后循环
+.wrap
+
