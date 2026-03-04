@@ -34,3 +34,16 @@ pico_enable_stdio_uart(firmware 0)
 
 # 生成 .uf2 文件
 pico_add_extra_outputs(firmware)
+
+if(DEFINED ENV{USER} AND NOT "$ENV{USER}" STREQUAL "")
+    set(RP2040_MOUNT_DIR "/media/$ENV{USER}/RPI-RP2")
+else()
+    set(RP2040_MOUNT_DIR "/media/RPI-RP2")
+endif()
+
+add_custom_target(flash
+    DEPENDS firmware
+    # 自动读取当前用户名拼接挂载点，避免硬编码用户名
+    COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/firmware.uf2 ${RP2040_MOUNT_DIR}/
+    COMMENT "Flashing firmware.uf2 to RP2040..."
+)
